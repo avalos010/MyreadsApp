@@ -3,10 +3,10 @@ import * as BooksAPI from './BooksAPI'
 import './App.css'
 import DisplaySearchBooks from './DisplaySearchBooks.js'
 import { Route,Link } from 'react-router-dom'
-import CurrentlyReading from './currentlyReading.js'
 
 
 class BooksApp extends React.Component {
+
   state = {
     /**
      * TODO: Instead of using this state variable to keep track of which page
@@ -20,7 +20,6 @@ class BooksApp extends React.Component {
     read: []
 
   }
-
   updateStatus = (book, value) => {
 
     BooksAPI.update(book, value).then(res => {
@@ -44,10 +43,11 @@ class BooksApp extends React.Component {
 
 //   updateStatus = (book,value) => {
 //     book.shelf = value
+     
 //     BooksAPI.update(book,value).then(res =>{
-//       this.setState({
-//         shelf: this.state.value.concat(book)
-//       })
+//       this.setState(state => ({
+//       value: state.value.concat(book)
+//        }))
 //     })
 // }
 
@@ -68,10 +68,13 @@ componentWillMount() {
   })
 }
 
-changeShelf = (shelf,book) => {
-console.log(this.state.shelf)
-this.setState({shelf:shelf.filter(b => b.id !== book.id)})
-}
+
+// changeShelf = (shelf,book) => {
+//   console.log(shelf);
+//   this.setState(state => ({
+//         shelf: state.shelf.filter(b => b.id !== book.id)
+//       }))
+// }
 
 
 
@@ -97,13 +100,40 @@ this.setState({shelf:shelf.filter(b => b.id !== book.id)})
             <div className="list-books-title">
               <h1>MyReads</h1>
             </div>
-            <CurrentlyReading
-          currentlyReading={this.state.currentlyReading}
-        read={this.state.read}
-        wantToRead={this.state.wantToRead}
-        updateStatus={this.updateStatus}
-        changeShelf={this.changeShelf}
-            />
+            <div className="bookshelf">
+                  <h2 className="bookshelf-title">Currently Reading</h2>
+                  <div className="bookshelf-books">
+                    <ol className="books-grid">
+
+                     {currentlyReading.map(book => {
+                      return <li key={book.id}>
+                        <div className="book">
+                          <div className="book-top">
+                            <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                            <div className="book-shelf-changer">
+                              <select defaultValue="currentlyReading" 
+                              onChange={(e) => {
+                          this.updateStatus(book,e.target.value)
+                          this.setState({currentlyReading: this.state.currentlyReading.filter(b => b.id !== book.id)})
+                             }}>
+                  
+                                <option value="none" disabled>Move to...</option>
+                                <option value="currentlyReading">Currently Reading</option>
+                                <option value="wantToRead">Want to Read</option>
+                                <option value="read">Read</option>
+                                <option value="none">None</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div className="book-title">{book.title}</div>
+                          <div className="book-authors">{book.authors}</div>
+                        </div>
+                      </li>
+                     })}
+                    </ol>
+                  </div>
+                </div>
+
             <div className="list-books-content">
               <div>
                
@@ -151,19 +181,10 @@ this.setState({shelf:shelf.filter(b => b.id !== book.id)})
                           <div className="book-top">
                             <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                             <div className="book-shelf-changer">
-                              <select defaultValue="Read"
+                              <select defaultValue="none"
                               onChange={(e) => {
-                                  if(e.target.value === "currentlyReading") {
-  
-                                      this.setState({currentlyReading: currentlyReading.concat(book)})
-                                      this.setState({read: read.filter(b => b !== book )})
-                                  } 
-                                 else if(e.target.value === "wantToRead") {
-                                      this.setState({wantToRead: wantToRead.concat(book)})
-                                      this.setState({read: read.filter(b => b !== book )})                                  
-                            } 
-                                  
-
+                              this.updateStatus(book,e.target.value)
+                              this.setState({read: this.state.read.filter(b => b.id !== book.id)})
                               }}>
                               
                                 <option value="none" disabled>Move to...</option>
