@@ -41,16 +41,6 @@ class BooksApp extends React.Component {
     })
   }
 
-//   updateStatus = (book,value) => {
-//     book.shelf = value
-     
-//     BooksAPI.update(book,value).then(res =>{
-//       this.setState(state => ({
-//       value: state.value.concat(book)
-//        }))
-//     })
-// }
-
 componentWillMount() {
   BooksAPI.getAll().then(books => {
     books.map(book => {

@@ -22,7 +22,7 @@ class DisplaySearchBooks extends Component {
 
  
  results() {
-  if(this.state.books !== undefined & this.state.query.length !== 0) {
+  if(this.state.books !== undefined && this.state.books.length > 0 && this.state.query.length > 0) {
     return this.state.books.map(result => <li key={result.id}>
                         <div className="book">
                           <div className="book-top">
